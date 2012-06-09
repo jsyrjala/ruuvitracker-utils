@@ -26,16 +26,16 @@
 
 (defn- send-tracker-message [url tracker-msg]
   (let [params {:body (json/generate-string tracker-msg)
-                    :headers {"User-Agent" "RuuviTracker NMEA Importer/0.1"}
-                    :content-type :json
-                    :accept :json
-                    :socket-timeout 1000
-                :conn-timeout 1000}]
-    (info "POST" url params)    
+                :headers {"User-Agent" "RuuviTracker NMEA Importer/0.1"}
+                :content-type :json
+                :accept :json
+                :socket-timeout (* 300 1000)
+                :conn-timeout (* 60 1000)}]
+    (debug "POST" url params)    
     (client/post url params)))
 
 (defn send-nmea-data [url nmea-data tracker-id secret]
-  (info "Sending" (:type nmea-data) "message to" url)
+  (debug "Sending" (:type nmea-data) "message to" url)
   (let [tracker-msg (generate-tracker-message nmea-data tracker-id secret)]
     (send-tracker-message url tracker-msg)
   ))
