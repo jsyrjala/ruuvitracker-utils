@@ -47,8 +47,9 @@
   (defmethod parse-nmea-data nil
     ;; Unsupported messages return nil
     [parts] nil)
-  
-  (let [line (string/replace line #"^\$" "")
-        parts (string/split line #"," )
-        type (parse-nmea-type parts)]
-    (parse-nmea-data parts)))
+
+  (when line
+    (let [line (string/replace line #"^\$" "")
+          parts (string/split line #"," )
+          type (parse-nmea-type parts)]
+      (parse-nmea-data parts))))

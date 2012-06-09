@@ -8,6 +8,9 @@
 (def unsupported "$GPGSV,3,1,12,08,79,114,40,26,56,281,45,28,39,176,36,07,37,084,39*73")
 (def corrupted "corrupted")
 
+(fact (parse-nmea-message nil) =>
+      nil)
+
 (fact (parse-nmea-message corrupted) =>
       nil)
 
