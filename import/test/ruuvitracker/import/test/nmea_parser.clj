@@ -1,7 +1,7 @@
 (ns ruuvitracker.import.test.nmea-parser
   (:use [ruuvitracker.import.nmea-parser])
   (:use midje.sweet)
-  )
+  (:import [org.joda.time DateTime DateTimeZone]))
 
 (def gprmc "$GPRMC,093743.000,A,6103.8614,N,02805.7936,E,10.05,42.40,080612,,,A*7C")
 (def gpgga "$GPGGA,093741.000,6103.8614,N,02805.7936,E,1,10,1.0,78.1,M,18.4,M,,0000*6C")
@@ -45,3 +45,19 @@
 
 (fact (:heading (parse-nmea-message gprmc)) =>
       "42.40")
+
+(fact (:timestamp (parse-nmea-message gprmc)) =>
+      (DateTime. 2012 6 8 9 37 43 0 (DateTimeZone/forID "UTC")))
+
+(let [data (with-open [rdr (clojure.java.io/reader "test/ruuvitracker/import/test/nmea-example.txt")]
+             (parse-nmea rdr identity))]
+  (fact (count data)
+        => 12)
+  (fact (count (filter (fn [item] (= :GPGGA (:type item))) data))
+        => 6)
+  (fact (count (filter (fn [item] (= :GPRMC (:type item))) data))
+        => 6)
+  (fact (count (filter (fn [item] (= :GPGSV (:type item))) data))
+        => 0)
+  )
+
