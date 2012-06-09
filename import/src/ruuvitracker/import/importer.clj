@@ -10,8 +10,10 @@
   (with-open [reader (clojure.java.io/reader nmea-file)]
     (parse-nmea reader (fn [msg]
                          (when (= (:type msg) :GPRMC)
-                           (prn msg)
+                           (debug "Sending message" msg)
                            (send-nmea-data ruuvitracker-url msg tracker-id secret)
                            )))
-  ))
+    )
+  (info "Sending ready")
+  )
 
