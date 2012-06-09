@@ -24,6 +24,19 @@
   (when (not (string/blank? value))
     (BigDecimal. value)))
 
+(defn- to-coordinate [value type]
+  (when (and (not (string/blank? value))
+             (not (string/blank? type)))
+    (remove-leading-zeros (str value "," type))))
+
+(defn- remove-empty-values [map-data]
+  (merge {} (filter (fn [[key value]]
+                      (cond
+                       (= value nil) false
+                       (and (string? value) (string/blank? value)) false
+                       :else true))
+                    map-data)))
+
 (defmulti parse-nmea-data
   (fn [parts]
     (parts 0) )
@@ -31,22 +44,24 @@
 
 (defmethod parse-nmea-data "GPGGA"
   [parts]
-  {:type (keyword (parts 0))
-   :time (parts 1)
-   :lat (remove-leading-zeros (str (parts 2) "," (parts 3)))
-   :lon (remove-leading-zeros (str (parts 4) "," (parts 5)))
-   })
+  (remove-empty-values
+   {:type (keyword (parts 0))
+    :time (parts 1)
+    :lat (to-coordinate (parts 2) (parts 3))
+    :lon (to-coordinate (parts 4) (parts 5))
+   }))
 
 (defmethod parse-nmea-data "GPRMC"
   [parts]
-  {:type (keyword (parts 0))
-   :timestamp (to-date-time (parts 1) (parts 9))
-   :warning (parts 2)
-   :lat (remove-leading-zeros (str (parts 3) "," (parts 4)))
-   :lon (remove-leading-zeros (str (parts 5) "," (parts 6)))
-   :speed (parts 7)
-   :heading (parts 8)
-   })
+  (remove-empty-values
+   {:type (keyword (parts 0))
+    :timestamp (to-date-time (parts 1) (parts 9))
+    :warning (parts 2)
+    :lat (to-coordinate (parts 3) (parts 4))
+    :lon (to-coordinate (parts 5) (parts 6))
+    :speed (parts 7)
+    :heading (parts 8)
+    }))
 
 (defmethod parse-nmea-data nil
   ;; Unsupported messages return nil
