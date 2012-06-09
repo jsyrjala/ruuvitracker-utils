@@ -23,8 +23,8 @@
    :headers {"User-Agent" "RuuviTracker NMEA Importer/0.1"},
    :content-type :json,
    :accept :json,
-   :socket-timeout 1000,
-   :conn-timeout 1000})
+   :socket-timeout 300000,
+   :conn-timeout 60000})
 
 (fact "Sending message succeeds"
       (send-nmea-data url gpgga tracker-id secret) => {:status 200}
