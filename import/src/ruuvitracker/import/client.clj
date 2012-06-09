@@ -10,9 +10,9 @@
            [org.joda.time DateTime DateTimeZone])
   (:use [clojure.tools.logging :only (debug info warn error)]))
 
-(def date-time-formatter (.withZone
-                          (DateTimeFormat/forPattern "YYYY-MM-dd'T'HH:mm:ss.SSSZ")
-                          (DateTimeZone/forID "UTC")))
+(defonce date-time-formatter (.withZone
+                              (DateTimeFormat/forPattern "YYYY-MM-dd'T'HH:mm:ss.SSSZ")
+                              (DateTimeZone/forID "UTC")))
 
 (defn- generate-tracker-message [nmea-data tracker-id secret]
   (let [message {:version "1"

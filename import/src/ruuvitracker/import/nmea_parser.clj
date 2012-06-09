@@ -7,9 +7,9 @@
 ;; Only GPGGA and GPRMC messages are supported.
 ;; Only partial data is parsed.
 
-(def date-time-formatter (.withZone
-                          (DateTimeFormat/forPattern "ddMMyy'T'HHmmss.SSS")
-                          (DateTimeZone/forID "UTC")))
+(defonce nmea-date-time-formatter (.withZone
+                                   (DateTimeFormat/forPattern "ddMMyy'T'HHmmss.SSS")
+                                   (DateTimeZone/forID "UTC")))
 
 (defn- remove-leading-zeros[value]
   (when value
@@ -17,7 +17,7 @@
 
 (defn- to-date-time [time date]
   (when (not (or (string/blank? time) (string/blank? date)))
-    (.parseDateTime date-time-formatter (str date "T" time))
+    (.parseDateTime nmea-date-time-formatter (str date "T" time))
     ))
 
 (defn- to-float [value]
